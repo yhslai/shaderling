@@ -8,12 +8,20 @@
     "express": "2.5.2",
     "jade": "0.20.0",
     "mongoose": "2.4.8",
-    "socket.io": "0.8.7"
+    "socket.io": "0.8.7",
+    "connect-assets": "2.5.3",
+    "less": "1.6.0",
+    "coffee-script": "1.6.3"
   },
   "devDependencies": {
     "vows": "0.5.x",
-	"mocha": "*",
-	"should": "*"
+    "mocha": "*",
+    "should": "*",
+    "grunt": "~0.4.2",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-nodeunit": "~0.2.0",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-nodemon": "~0.1.2"
   },
   "engine": "node >= 0.6.6"
 }

@@ -2,7 +2,11 @@
 var connect = require('connect')
     , express = require('express')
     , io = require('socket.io')
-    , port = (process.env.PORT || 8081);
+    , port = (process.env.PORT || 8080)
+    , fs = require('fs')
+    , path = require('path')
+    , connectAssets = require('connect-assets')
+    ;
 
 //Setup Express
 var server = express.createServer();
@@ -12,6 +16,9 @@ server.configure(function(){
     server.use(connect.bodyParser());
     server.use(express.cookieParser());
     server.use(express.session({ secret: "shhhhhhhhh!"}));
+    server.use(connectAssets({
+      src: 'static',
+    }))
     server.use(connect.static(__dirname + '/static'));
     server.use(server.router);
 });
@@ -37,6 +44,7 @@ server.error(function(err, req, res, next){
 });
 server.listen( port);
 
+/*
 //Setup Socket.IO
 var io = io.listen(server);
 io.sockets.on('connection', function(socket){
@@ -49,6 +57,7 @@ io.sockets.on('connection', function(socket){
     console.log('Client Disconnected.');
   });
 });
+*/
 
 
 ///////////////////////////////////////////
@@ -58,13 +67,40 @@ io.sockets.on('connection', function(socket){
 /////// ADD ALL YOUR ROUTES HERE  /////////
 
 server.get('/', function(req,res){
-  res.render('index.jade', {
-    locals : { 
-              title : 'Your Page Title'
-             ,description: 'Your Page Description'
-             ,author: 'Your Name'
-             ,analyticssiteid: 'XXXXXXX' 
-            }
+  function render(templates) {
+    res.render('index.jade', {
+      locals : { 
+        title : 'Shaderling | The Shader Editor in HTML5',
+        description: 'An open-source, web-based GPU shader program editor.',
+        author: 'Raincole Lai',
+        analyticssiteid: 'XXXXXXX',
+        templates: templates,
+      }
+    });
+  }
+
+
+  var dir = './views/templates/';
+
+  fs.readdir(dir, function(err, files) {
+    if(err) throw err;
+
+    var count = 0;
+    var templates = [];
+
+    files.forEach(function(file) {
+      count++;
+      fs.readFile(dir + file, 'utf-8', function(err, html) {
+        if(err) throw err;
+
+        templates.push({
+          name: path.basename(file, '.html'),
+          html: html,
+        })
+        count--;
+        if(count === 0) render(templates);
+      });
+    });
   });
 });
 
