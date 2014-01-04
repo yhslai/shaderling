@@ -67,7 +67,7 @@ io.sockets.on('connection', function(socket){
 /////// ADD ALL YOUR ROUTES HERE  /////////
 
 server.get('/', function(req,res){
-  function render(templates) {
+  function render(templates, models) {
     res.render('index.jade', {
       locals : { 
         title : 'Shaderling | The Shader Editor in HTML5',
@@ -75,33 +75,48 @@ server.get('/', function(req,res){
         author: 'Raincole Lai',
         analyticssiteid: 'XXXXXXX',
         templates: templates,
+        models: models,
       }
     });
   }
 
+  function mapDir(dir, mapping, callback) {
+    fs.readdir(dir, function(err, files) {
+      if(err) throw err;
 
-  var dir = './views/templates/';
+      var count = 0;
+      var results = [];
 
-  fs.readdir(dir, function(err, files) {
-    if(err) throw err;
+      files.forEach(function(filename) {
+        count++;
+        fs.readFile(dir + filename, 'utf-8', function(err, content) {
+          if(err) throw err;
 
-    var count = 0;
-    var templates = [];
-
-    files.forEach(function(file) {
-      count++;
-      fs.readFile(dir + file, 'utf-8', function(err, html) {
-        if(err) throw err;
-
-        templates.push({
-          name: path.basename(file, '.html'),
-          html: html,
-        })
-        count--;
-        if(count === 0) render(templates);
+          results.push(mapping(filename, content))
+          count--;
+          if(count === 0) callback(results);
+        });
       });
     });
+  }
+
+
+  mapDir('./views/templates/', function(filename, content) {
+    return {
+      name: path.basename(filename, '.html'),
+      html: content,
+    }
+  }, function(templates) {
+    mapDir('./views/models/', function(filename, content) {
+      return {
+        name: path.basename(filename, '.json'),
+        model: content,
+      }
+    }, function(models) {
+      render(templates, models);
+    });
   });
+
 });
 
 

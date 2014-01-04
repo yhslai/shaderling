@@ -1,9 +1,30 @@
 class Block
   constructor: () ->
     self = @
-    $block = $($.render($('#_block').html()))
+    $.observable(self)
+
+    self.on('appendTo', @onAppendTo)
+
+    viewContext = () ->
+      id: self.id
+      data: self.data
+      name: self.name
+      comment: self.comment
+
+    @inPorts ?= []
+    @outPorts ?= []
+    @id ?= 'block'
+    @data ?= {}
+    @name ?= 'Empty'
+    @comment ?= 'comment'
+
+    $block = $($.render(
+      $('#_block').html(), viewContext()
+    ))
     @svg = Snap.parse($block.html()).select('.block-svg')
     @dom = $block.find('.block-dom')
+    partial = $("##{@partialId}").html()
+    @dom.append(partial)
 
     oldPos = {}
     @svg.drag(((dx, dy, posx, posy) -> 
@@ -16,9 +37,7 @@ class Block
     ), ( ->
     ))
 
-  appendTo: (svg, dom) ->
-    svg.append(@svg)
-    dom.append(@dom)
+  onAppendTo: (svg, dom) ->
     @relocateDom()
 
   move: (x, y) ->

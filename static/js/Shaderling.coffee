@@ -1,4 +1,5 @@
 #= require Block
+#= require_tree blocks
 
 class Shaderling
   constructor: () ->
@@ -16,11 +17,18 @@ class Shaderling
     $(window).on('resize', resizeSvg)
     resizeSvg()
 
-    @createBlock()
+    b1 = new Vertices(JSON.parse($('#cube_model').html()))
+    b2 = new Preview()
 
-  createBlock: () ->
-    block = new Block
-    block.appendTo(@svg, @dom)
+    b1.move(200, 20)
+    b2.move(200, 160)
+    @appendBlock(b1)
+    @appendBlock(b2)
+
+  appendBlock: (block) ->
+    @svg.append(block.svg)
+    @dom.append(block.dom)
+    block.trigger('appendTo', @svg, @dom)
 
 window.Shaderling = Shaderling
 

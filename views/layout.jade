@@ -38,5 +38,9 @@ html.no-js(lang='en')
 
     #templates(hidden=true)
       each template in templates
-        div(id=template.name)
+        script(id=template.name, type="text/template")
           != template.html
+    #models(hidden=true)
+      each model in models
+        script(id=model.name, type="text/template")
+          != model.model

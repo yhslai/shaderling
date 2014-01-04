@@ -15,6 +15,7 @@
 	fill: white;
 	stroke: black;
 	stroke-width: 1px;
+  cursor: pointer;
 }
 
 .block-dom {
@@ -27,6 +28,23 @@
 		display: inline-block;
 		vertical-align: middle;
 	  pointer-events: visiblePainted;
+	}
+	.block-comment {
+		position: absolute;
+		left: 110%;
+		top: 50%;
+		min-width: 15px;
+		margin-top: -0.75em;
+	  pointer-events: visiblePainted;
+		font-size: 0.75em;
+		color: rgb(150, 150, 150);
+	}
+}
+
+.block-dom.preview {
+	.preview-container {
+		position: absolute;
+		top: 100%
 	}
 }
 
