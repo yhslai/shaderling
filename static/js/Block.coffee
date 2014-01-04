@@ -16,10 +16,11 @@ class Block
     @id ?= 'block'
     @data ?= {}
     @name ?= 'Empty'
-    @comment ?= 'comment'
+    @comment ?= ''
+    @viewId ?= '_block'
 
     $block = $($.render(
-      $('#_block').html(), viewContext()
+      $("##{@viewId}").html(), viewContext()
     ))
     @svg = Snap.parse($block.html()).select('.block-svg')
     @dom = $block.find('.block-dom')

@@ -1,13 +1,13 @@
 #= require ../Block
 
 class Vertices extends Block
-  constructor: (model) ->
+  constructor: (geometry) ->
     @inPorts = []
     @outPorts = [
       { type: 'collection@vect3#vertex' }
     ]
     @id = 'vertices'
-    @data = model.vertices
+    @data = geometry.vertices
 
     super 
 
