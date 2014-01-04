@@ -1,7 +1,7 @@
 #= require_tree vendor
 #= require Shaderling
+#= require Utils
 
 $(document).ready( ->
-	app = new Shaderling
-	app.init()
+	Shaderling.init()
 );

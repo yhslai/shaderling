@@ -34,12 +34,14 @@ class Shaderling
     @appendBlock(b2)
     @appendBlock(b3)
 
+    @selectedPort = null
+
   appendBlock: (block) ->
     @svg.append(block.svg)
     @dom.append(block.dom)
     block.trigger('appendTo', @svg, @dom)
 
-window.Shaderling = Shaderling
+window.Shaderling = new Shaderling # Singleton
 
   
 
