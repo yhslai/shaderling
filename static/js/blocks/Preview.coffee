@@ -10,8 +10,8 @@ class Preview extends Block
   FAR = 10000
 
   constructor: (@width=WIDTH, @height=HEIGHT) ->
-    @inPorts = []
-    @outPorts = []
+    @inPortTypes = []
+    @outPortTypes = []
     @id = 'preview'
     @data = {}
     @comment = ''

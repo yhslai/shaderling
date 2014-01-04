@@ -42,7 +42,7 @@ server.error(function(err, req, res, next){
                 },status: 500 });
     }
 });
-server.listen( port);
+server.listen(port);
 
 /*
 //Setup Socket.IO

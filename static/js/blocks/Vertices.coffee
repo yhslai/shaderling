@@ -2,8 +2,8 @@
 
 class Vertices extends Block
   constructor: (geometry) ->
-    @inPorts = []
-    @outPorts = [
+    @inPortTypes = []
+    @outPortTypes = [
       { type: 'collection@vect3#vertex' }
     ]
     @id = 'vertices'

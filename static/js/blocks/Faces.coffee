@@ -2,8 +2,8 @@
 
 class Faces extends Block
   constructor: (geometry) ->
-    @inPorts = []
-    @outPorts = [
+    @inPortTypes = []
+    @outPortTypes = [
       { type: 'collection@face' }
     ]
     @id = 'faces'

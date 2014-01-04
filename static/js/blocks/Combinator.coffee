@@ -2,12 +2,12 @@
 
 class Combinator extends Block
   constructor: () ->
-    @inPorts = [
+    @inPortTypes = [
       { type: 'hub', hubtypes: [
         'collection@vect3#vertex', 'collection@vect3#color', 'collection@face'
       ]}
     ]
-    @outPorts = [
+    @outPortTypes = [
       { type: 'member@mesh' }
     ]
     @id = 'c'
