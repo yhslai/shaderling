@@ -23,10 +23,7 @@ class Interpolate extends Block
           @inPorts.push(newIn)
           @appendPort(newIn)
           newOut = new Port(@, @varyingType(otherPort.type), 'out')
-          if @outPorts.length == 1
-            @outPorts.unshift(newOut)
-          else
-            @outPorts.splice(1, 0, newOut)
+          @outPorts.splice(@outPorts.length - 1, 0, newOut)
           @appendPort(newOut)
 
     window.i = @
@@ -36,14 +33,15 @@ class Interpolate extends Block
     jQuery.extend({modifier: 'varying'}, type);
 
   populateStatements: (stage, statements) ->
-    super
+    super if stage is 'vertex'
     self = @
     @outPorts.forEach((outPort, i) ->
+      console.log(outPort)
       inPort = self.inPorts[i]
-      outPort.name = inPort.name
       if outPort.isUsed() and inPort.isUsed()
         type = inPort.type
-        statements.declarationPart.push("varying #{type.type} #{inPort.name}")
+        statements.mainPart.push("#{outPort.name} = #{inPort.name}") if stage is 'vertex'
+        statements.declarationPart.push("varying #{type.type} #{outPort.name}")
     )
 
   

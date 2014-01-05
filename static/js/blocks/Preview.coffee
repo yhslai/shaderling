@@ -3,8 +3,8 @@
 ID = 'preview'
 
 class Preview extends Block
-  WIDTH = 400
-  HEIGHT = 300
+  WIDTH = 360 
+  HEIGHT = 270 
 
   VIEW_ANGLE = 45
   ASPECT = WIDTH / HEIGHT
@@ -31,6 +31,8 @@ class Preview extends Block
     @trigger('dataChange', {})
 
   initScene: () ->
+    self = @
+
     @renderer = new THREE.WebGLRenderer()
     @camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR)
 
@@ -40,8 +42,22 @@ class Preview extends Block
     @renderer.setClearColor( 0xFFFFFF, 1 );
     @renderer.clear();
 
+    @scene = new THREE.Scene()
+
     $container = @dom.find('.preview-container')
     $container.append(@renderer.domElement)
+
+    controls = new THREE.TrackballControls(@camera, $container[0])
+    controls.target.set(0, 0, 0)
+    controls.addEventListener('change', -> self.render());
+    controls.rotateSpeed = 0.6;
+    controls.zoomSpeed = 0.8;
+    controls.panSpeed = 0.5;
+
+    updateControls = ->
+      requestAnimationFrame(updateControls)
+      controls.update()
+    updateControls()
 
     $container.css(
       left: -(@width - @dom.width()) / 2
@@ -55,7 +71,6 @@ class Preview extends Block
     visited = {}
 
     iter = (block) ->
-      firstPortName = block.outPorts[0]?.name
       if block instanceof Positions
         positionsBlock = block
       else if block instanceof AttributesBlock
@@ -105,7 +120,11 @@ class Preview extends Block
     @scene = new THREE.Scene()
     @scene.add(mesh);
 
+    @render()
+
+  render: () ->
     @renderer.render(@scene, @camera)
+
 
 Block.blockDict[ID] = Preview
 window.Preview = Preview

@@ -5,7 +5,7 @@ ID = '-'
 
 class Subtract extends BinaryOperator
   constructor: () ->
-    @id = Subtract
+    @id = ID
     @operator = '-'
 
     super 

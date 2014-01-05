@@ -3,5 +3,7 @@ extends layout
 block content
   #main-container
     svg#main(xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink")
-    .menu
-      .button.add-button(type="button")
+    .menu.clearfix
+      div.button.add-button(type="button")
+      div.button.upload-button(type="button")
+      input.real-upload-button(type="file", name="file", hidden)

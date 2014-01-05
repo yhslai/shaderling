@@ -8,8 +8,6 @@ class Add extends BinaryOperator
     @id = ID
     @operator = '+'
 
-    console.log(@)
-
     super 
 
 Block.blockDict[ID] = Add

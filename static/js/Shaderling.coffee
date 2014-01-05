@@ -20,8 +20,11 @@ class Shaderling
     resizeSvg()
 
     $('.add-button').on('click', -> self.createEmptyBlock())
+    $realUploadButton = $('.real-upload-button') 
+    $realUploadButton.on('change',  -> self.handleFileSelect(@.files[0]))
+    $('.upload-button').on('click', -> $realUploadButton.trigger('click'))
 
-    model = JSON.parse($('#cube_model').html())
+    model = JSON.parse($('#c1').html())
     loader = new THREE.JSONLoader(true);
     geometry = loader.parse(model).geometry
     console.log(model,loader.parse(model),geometry)
@@ -51,6 +54,31 @@ class Shaderling
     block = new Block()
     block.move(900, 150)
     @appendBlock(block)
+
+  handleFileSelect: (file) ->
+    self = @
+    reader = new FileReader()
+    reader.onload = (e) ->
+      self.createBlocksByModel(JSON.parse(e.target.result), file.name)
+    reader.readAsText(file)
+
+  createBlocksByModel: (model, filename) ->
+    basename = filename.replace(/\..+$/, '')
+    console.log(filename, basename)
+    loader = new THREE.JSONLoader(true);
+    geometry = loader.parse(model).geometry
+    pb = new Positions(geometry)
+    cb = new Colors(geometry)
+    fb = new Faces(geometry)
+    pb.changeComment(basename)
+    cb.changeComment(basename)
+    fb.changeComment(basename)
+    pb.move(850, 50)
+    cb.move(1000, 50)
+    fb.move(1150, 50)
+    @appendBlock(pb)
+    @appendBlock(cb)
+    @appendBlock(fb)
 
   appendBlock: (block) ->
     @blocks.push(block)

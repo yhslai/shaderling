@@ -8,7 +8,7 @@ class Port
     self.on('newConnection', @onNewConnection)
 
     @selected = false
-    @connection = null 
+    @connections = []
 
     portXml = $.render($("#_port").html(), { kind: @kind })
     @svg = Snap.parse(portXml).select('.port')
@@ -37,7 +37,7 @@ class Port
     self = @
 
     oldOther = @connectedPort()
-    @connection = connection
+    @connections.push(connection)
     other = @connectedPort()
     callback = ->
       self.block.trigger('portChange', self, other, oldOther)
@@ -61,7 +61,7 @@ class Port
       y: y
     )
 
-    @connection?.trigger('portMove', @)
+    @connections.forEach((c) -> c.trigger('portMove', @))
 
   getBoundingBox: () ->
     x = @block.realPos.x
@@ -81,7 +81,7 @@ class Port
     @connectedPort()?
 
   connectedPort: () ->
-    @connection?.otherPort(@)
+    @connections[0]?.otherPort(@)
 
   updateName: () ->
     self = @

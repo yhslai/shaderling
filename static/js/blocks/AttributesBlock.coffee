@@ -16,7 +16,7 @@ class AttributesBlock extends Block
     if outPort.isUsed()
       type = outPort.type
       statements.declarationPart.push("attribute #{type.type} #{@attributeName()}")
-      statements.mainPart.push("#{outPort.name} = #{@attributeName()}")
+      statements.mainPart.push("#{type.type} #{outPort.name} = #{@attributeName()}")
 
   attributeName: () ->
     @nameDom.text()

@@ -139,6 +139,10 @@ class Block
   rectAttr: (attrName) ->
     parseInt(@blockRect.attr(attrName))
 
+  changeComment: (comment) ->
+    @comment = comment
+    @dom.find('.block-comment').text(comment)
+
   populateStatements: (stage, statements) ->
     @forAllPorts((p) -> p.updateName())
 
