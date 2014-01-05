@@ -1,0 +1,1 @@
+window.GLSL_ES = {}

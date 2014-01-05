@@ -8,7 +8,7 @@ module.exports = function(grunt) {
         options: {
           file: 'server.js',
           args: ['dev'],
-          nodeArgs: ['--debug'],
+          nodeArgs: ['debug'],
           ignoredFiles: ['node_modules/**'],
           delayTime: 1,
           legacyWatch: true,

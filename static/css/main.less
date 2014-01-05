@@ -9,47 +9,24 @@
 	.layered-ui {
 		position: absolute;
 	}
-}
 
-.block-svg {
-	fill: white;
-	stroke: black;
-	stroke-width: 1px;
-  cursor: pointer;
-}
-
-.block-dom {
-  text-align: center;
-  pointer-events: none;
-	.block-name {
-		height: 0.75em;
-		min-width: 15px;
-		max-width: 95px;
-		display: inline-block;
-		vertical-align: middle;
-	  pointer-events: visiblePainted;
-	}
-	.block-comment {
+	.menu {
 		position: absolute;
-		left: 110%;
-		top: 50%;
-		min-width: 15px;
-		margin-top: -0.75em;
-	  pointer-events: visiblePainted;
-		font-size: 0.75em;
-		color: rgb(150, 150, 150);
+		top: 20px;
+		right: 0px;
+		.add-button{
+			background-image: url(/images/icons/plus.png);
+	    background-color: transparent;
+	    background-repeat: no-repeat;
+	    background-position: 0px 0px;
+	    border: none;
+	    cursor: pointer;
+	    height: 26px;
+	    width: 26px;
+	    margin-right: 12px;
+	    vertical-align: middle;	
+		}
 	}
-}
-
-.block-dom.preview {
-	.preview-container {
-		position: absolute;
-		top: 100%
-	}
-}
-
-.connection {
-	stroke: black;
 }
 
 #main {
@@ -58,3 +35,74 @@
 		stroke-width: 2px;
 	}
 }
+
+.block-svg {
+	fill: white;
+	stroke: black;
+	stroke-width: 1px;
+  cursor: pointer;
+  .port {
+  	cursor: crosshair;
+  }
+}
+
+.block-dom {
+  text-align: center;
+  pointer-events: none;
+	.block-id {
+		height: 0.75em;
+		min-width: 15px;
+		max-width: 95px;
+		display: inline-block;
+		vertical-align: middle;
+	  cursor: pointer;
+	}
+	.colors.block-id {
+		color: purple;
+	}
+	.I.block-id {
+		color: green;
+	}
+	.output.block-id, .preview.block-id  {
+		color: brown;
+	}
+	.block-id[contenteditable] {
+		color: rgb(100, 100, 100);
+	  pointer-events: visiblePainted;
+	  cursor: text;
+	}
+	.block-comment {
+		position: absolute;
+		left: 110%;
+		top: 50%;
+		min-width: 15px;
+		margin-top: -0.75em;
+		font-size: 0.75em;
+		color: rgb(150, 150, 150);
+		pointer-events: visiblePainted;
+	}
+	.input-name {
+		position: absolute;
+		top: -55%;
+		left: 0;
+		width: 100%;
+		font-size: 0.85em;
+		color: purple;
+		display: inline-block;
+		vertical-align: middle;
+	  pointer-events: visiblePainted;
+	}
+}
+
+.block-dom.preview {
+	.preview-container {
+		position: absolute;
+		top: 100%;
+		border: grey 1px dashed;
+	}
+}
+
+.connection {
+	stroke: black;
+}
+

@@ -5,11 +5,14 @@ class Port
     self = @
     $.observable(self)
 
+    self.on('newConnection', @onNewConnection)
+
     @selected = false
-    @connections = []
+    @connection = null 
 
     portXml = $.render($("#_port").html(), { kind: @kind })
     @svg = Snap.parse(portXml).select('.port')
+    @svg.attr('visibility', 'hidden') if @type.hidden?
 
     @svg.click(-> self.onClick())
 
@@ -19,14 +22,28 @@ class Port
     else
       other = Shaderling.selectedPort
       if other
+        oldOther = @connectedPort()
         connection = Connection.makeConnection(@, other)
-        @connections.push(connection)
+        @trigger('newConnection', connection)
+        other.trigger('newConnection', connection)
         @unselect()
         other.unselect()
       else
         Shaderling.selectedPort = @
         @svg.node.classList.add('selected')
         @selected = true
+
+  onNewConnection: (connection) ->
+    self = @
+
+    oldOther = @connectedPort()
+    @connection = connection
+    other = @connectedPort()
+    callback = ->
+      self.block.trigger('portChange', self, other, oldOther)
+      Shaderling.refresh()
+
+    setTimeout(callback, 0) # wait until connections/ports are all updated
 
   unselect: ->
     Shaderling.selectedPort = null if Shaderling.selectedPort is @
@@ -44,7 +61,9 @@ class Port
       y: y
     )
 
-  centerPos: () ->
+    @connection?.trigger('portMove', @)
+
+  getBoundingBox: () ->
     x = @block.realPos.x
     y = @block.realPos.y
     ox = parseInt(@svg.attr('x'))
@@ -52,9 +71,29 @@ class Port
     w = parseInt(@svg.attr('width'))
     h = parseInt(@svg.attr('height'))
     {
-      x: x + ox + w / 2
-      y: y + oy + h / 2
+      x: x + ox
+      y: y + oy
+      width: w
+      height: h
     }
+
+  isUsed: () ->
+    @connectedPort()?
+
+  connectedPort: () ->
+    @connection?.otherPort(@)
+
+  updateName: () ->
+    self = @
+    generateName = () ->
+      type = self.type
+      "#{type.type}_#{type.modifier}_#{type.annotation}_#{Shaderling.Utils.generateUUID(6)}"
+
+    if @kind is 'in'
+      @name = @connectedPort()?.name ? generateName()
+    else
+      @name = generateName()
+
 
 
 window.Port = Port

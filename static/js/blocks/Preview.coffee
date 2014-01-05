@@ -1,5 +1,7 @@
 #= require ../Block
 
+ID = 'preview'
+
 class Preview extends Block
   WIDTH = 400
   HEIGHT = 300
@@ -9,17 +11,19 @@ class Preview extends Block
   NEAR = 0.1
   FAR = 10000
 
-  constructor: (@width=WIDTH, @height=HEIGHT) ->
-    @inPortTypes = []
+  constructor: () ->
+    @inPortTypes = [
+      { type: 'vec3', modifier: 'attribute', annotation: 'position' }
+      { type: 'vec3', modifier: 'varying', annotation: 'color' }
+      { type: 'face', annotation: 'face' }
+    ]
     @outPortTypes = []
-    @id = 'preview'
-    @data = {}
-    @comment = ''
-    @partialId = "_preview"
+    @id = ID
+    @partialId = "_preview_partial"
+    @width = WIDTH
+    @height = HEIGHT
 
     super 
-
-    @on('dataChange', @onDataChange)
 
   onAppendTo: (svg, dom) ->
     super
@@ -29,11 +33,12 @@ class Preview extends Block
   initScene: () ->
     @renderer = new THREE.WebGLRenderer()
     @camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR)
-    @scene = new THREE.Scene()
 
     @camera.position.z = 300
 
     @renderer.setSize(@width, @height)
+    @renderer.setClearColor( 0xFFFFFF, 1 );
+    @renderer.clear();
 
     $container = @dom.find('.preview-container')
     $container.append(@renderer.domElement)
@@ -42,33 +47,67 @@ class Preview extends Block
       left: -(@width - @dom.width()) / 2
     )
 
-  onDataChange: (data) ->
-    radius = 50
-    segments = 16
-    rings = 16;
+  onRefresh: () ->
+    positionsBlock = null
+    attributesBlocks = []
+    facesBlock = null
 
-    sphereMaterial = new THREE.MeshLambertMaterial(
-      color: 0xCC0000
+    visited = {}
+
+    iter = (block) ->
+      firstPortName = block.outPorts[0]?.name
+      if block instanceof Positions
+        positionsBlock = block
+      else if block instanceof AttributesBlock
+        attributesBlocks.push(block)
+      else if block instanceof Faces
+        facesBlock = block
+
+      visited[block.uuid] = true
+      block.inPorts.forEach((p) ->
+        otherBlock = p.connectedPort()?.block
+        if otherBlock?
+          if not visited[otherBlock.uuid]?
+            iter(otherBlock)
+      )
+
+    iter(@)
+
+    geometry = new THREE.Geometry()
+    geometry.vertices = positionsBlock.data
+    geometry.faces = facesBlock.data
+    geometry.verticesNeedUpdate = true
+    geometry.elementsNeedUpdate = true
+
+    attributes = {}
+    attributesBlocks.forEach((b) ->
+      attributes[b.attributeName()] = {
+        type: b.attributeType()
+        value: b.data
+      }
     )
 
-    sphere = new THREE.Mesh(
-      new THREE.SphereGeometry(radius, segments, rings),
-    sphereMaterial);
+    generator = new GLSL_ES.CodeGenerator()
+    shaders = generator.generateShader(@)
 
-    @scene.add(sphere);
+    shaderMaterial = new THREE.ShaderMaterial(
+      uniforms: {}
+      attributes:  attributes
+      vertexShader: shaders.vertexShader
+      fragmentShader: shaders.fragmentShader
+    )
 
-    pointLight = new THREE.PointLight( 0xFFFFFF )
+    mesh = new THREE.Mesh(
+      geometry
+      shaderMaterial
+    );
 
-    pointLight.position.x = 10;
-    pointLight.position.y = 50;
-    pointLight.position.z = 130;
+    @scene = new THREE.Scene()
+    @scene.add(mesh);
 
-    @scene.add(pointLight);
-
-    @renderer.setClearColor( 0xBBBBBB, 1 );
     @renderer.render(@scene, @camera)
 
-
+Block.blockDict[ID] = Preview
 window.Preview = Preview
 
 
