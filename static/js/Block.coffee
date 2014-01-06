@@ -86,6 +86,10 @@ class Block
   appendPort: (port) ->
     @svg.append(port.svg)
 
+  removePort: (port) ->
+    port.connections.forEach((c) -> c.remove())
+    port.svg.remove()
+
   usedInPorts: () ->
     @inPorts.filter((p) -> p.connectedPort()?)
 

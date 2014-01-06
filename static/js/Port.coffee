@@ -20,8 +20,8 @@ class Port
     if @selected
       @unselect()
     else
-      other = Shaderling.selectedPort
-      if other
+      other = Shaderling.selected
+      if other instanceof Port
         oldOther = @connectedPort()
         connection = Connection.makeConnection(@, other)
         @trigger('newConnection', connection)
@@ -29,7 +29,8 @@ class Port
         @unselect()
         other.unselect()
       else
-        Shaderling.selectedPort = @
+        other?.unselect()
+        Shaderling.selected = @
         @svg.node.classList.add('selected')
         @selected = true
 
@@ -38,15 +39,23 @@ class Port
 
     oldOther = @connectedPort()
     @connections.push(connection)
-    other = @connectedPort()
-    callback = ->
-      self.block.trigger('portChange', self, other, oldOther)
-      Shaderling.refresh()
 
-    setTimeout(callback, 0) # wait until connections/ports are all updated
+    setTimeout((-> self.portChange()), 0) # wait until connections/ports are all updated
+
+  onConnectionRemove: (connection) ->
+    self = @
+    
+    index = @connections.indexOf(connection)
+    if index isnt -1
+      @connections.splice(index, 1)
+      setTimeout((-> self.portChange()), 0) # wait until connections/ports are all updated
+
+  portChange: () ->
+    @block.trigger('portChange', @, @connectedPort())
+    Shaderling.refresh()
 
   unselect: ->
-    Shaderling.selectedPort = null if Shaderling.selectedPort is @
+    Shaderling.selected = null if Shaderling.selected is @
     @svg.node.classList.remove('selected')
     @selected = false
 

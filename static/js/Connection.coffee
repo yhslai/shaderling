@@ -12,6 +12,13 @@ class Connection
     mainSvg.prepend(@svg)
     @relocate()
 
+    @selected = false
+    @svg.click(-> self.onClick())
+    $(document).on('keydown', (e) ->
+      if e.which is 88 and self.selected
+        self.remove()
+    )
+
   @makeConnection: (port1, port2) ->
     if port1.block is port2.block
       null
@@ -21,6 +28,21 @@ class Connection
       new @(port1, port2)
     else
       null
+
+  onClick: ->
+    if @selected
+      @unselect()
+    else
+      other = Shaderling.selected
+      other?.unselect()
+      Shaderling.selected = @
+      @svg.node.classList.add('selected')
+      @selected = true
+
+  unselect: ->
+    Shaderling.selected = null if Shaderling.selected is @
+    @svg.node.classList.remove('selected')
+    @selected = false
 
   relocate: () ->
     inBBox = @inPort.getBoundingBox()
@@ -34,6 +56,11 @@ class Connection
 
   otherPort: (thisPort) ->
     if thisPort.kind is 'in' then @inPort else @outPort
+
+  remove: () ->
+    @svg.remove()
+    @inPort.onConnectionRemove(@)
+    @outPort.onConnectionRemove(@)
 
 
 

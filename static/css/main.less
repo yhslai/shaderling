@@ -1,5 +1,17 @@
 @import (less) "boilerplate.css";
 
+.square-button (@url, @size: 26px) {
+	background-image: @url;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  border: none;
+  cursor: pointer;
+  height: @size;
+  width: @size;
+  margin-right: (@size / 2);
+}
+
 #main-container {
 	width: 100%;
 	height: 100%;
@@ -15,22 +27,14 @@
 		top: 20px;
 		right: 0px;
 		.button {
-	    background-color: transparent;
-	    background-repeat: no-repeat;
-	    background-position: 0px 0px;
-	    border: none;
-	    cursor: pointer;
-	    height: 26px;
-	    width: 26px;
-	    margin-right: 12px;
-	    vertical-align: middle;	
-	    float: left;
+		  vertical-align: middle;	
+		  float: left;
 		}
 		.add-button {
-			background-image: url(/images/icons/plus.png);
+			.square-button(url(/images/icons/plus.png), 26px);
 		}
 		.upload-button {
-			background-image: url(/images/icons/upload.png);
+			.square-button(url(/images/icons/upload.png), 26px);
 		}
 	}
 }
@@ -39,6 +43,10 @@
 	.selected {
 		stroke: blue;
 		stroke-width: 2px;
+	}
+
+	.connection {
+		cursor: crosshair;	
 	}
 }
 
@@ -106,6 +114,36 @@
 		top: 100%;
 		border: grey 1px dashed;
 	  pointer-events: visiblePainted;
+	}
+}
+
+.block-dom.output {
+	.output-button {
+		.square-button(url(/images/icons/output.png), 26px);
+		margin: auto;
+		position: relative;
+		top: 50%;
+		pointer-events: visiblePainted;
+	}
+
+}
+
+#output-modal {
+	display: none;
+	background-color: rgba(255, 255, 255, 0.8);
+	position: fixed;
+	width: 90%;
+	height: 700px;
+	left: 5%;
+	top: 50px;
+
+	.vertex-shader, .fragment-shader {
+		width: 48%;
+		height: 100%;
+		float: left;
+		padding: 5px;
+		border: black 3px double;
+		white-space: pre-wrap;  
 	}
 }
 

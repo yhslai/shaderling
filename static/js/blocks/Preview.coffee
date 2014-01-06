@@ -47,21 +47,25 @@ class Preview extends Block
     $container = @dom.find('.preview-container')
     $container.append(@renderer.domElement)
 
-    controls = new THREE.TrackballControls(@camera, $container[0])
-    controls.target.set(0, 0, 0)
-    controls.addEventListener('change', -> self.render());
-    controls.rotateSpeed = 0.6;
-    controls.zoomSpeed = 0.8;
-    controls.panSpeed = 0.5;
+    @controls = new THREE.TrackballControls(@camera, $container[0])
+    @controls.target.set(0, 0, 0)
+    @controls.addEventListener('change', -> self.render());
+    @controls.rotateSpeed = 0.6;
+    @controls.zoomSpeed = 0.8;
+    @controls.panSpeed = 0.5;
 
     updateControls = ->
       requestAnimationFrame(updateControls)
-      controls.update()
+      self.controls.update()
     updateControls()
 
     $container.css(
       left: -(@width - @dom.width()) / 2
     )
+
+  locateDom: () ->
+    super
+    @controls?.handleResize()
 
   onRefresh: () ->
     positionsBlock = null
@@ -101,6 +105,8 @@ class Preview extends Block
         value: b.data
       }
     )
+
+    console.log(attributes)
 
     generator = new GLSL_ES.CodeGenerator()
     shaders = generator.generateShader(@)

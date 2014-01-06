@@ -1,5 +1,7 @@
 #= require ../Block
 
+ID = 'I'
+
 class Interpolate extends Block
   constructor: () ->
     @inPortTypes = [
@@ -8,23 +10,30 @@ class Interpolate extends Block
     @outPortTypes = [
       { type: 'none', hidden: true }
     ]
-    @id = 'I'
+    @id = ID
 
     super 
 
-  onPortChange: (thisPort, otherPort, oldOther) ->
+  onPortChange: (thisPort, otherPort) ->
     super
 
     if otherPort?
-      if not oldOther?
-        if thisPort is @inPorts[@inPorts.length-1]
-          thisPort.type = otherPort.type
-          newIn = new Port(@, @inPortTypes[0], 'in')
-          @inPorts.push(newIn)
-          @appendPort(newIn)
-          newOut = new Port(@, @varyingType(otherPort.type), 'out')
-          @outPorts.splice(@outPorts.length - 1, 0, newOut)
-          @appendPort(newOut)
+      if thisPort is @inPorts[@inPorts.length-1]
+        thisPort.type = otherPort.type
+        newIn = new Port(@, @inPortTypes[0], 'in')
+        @inPorts.push(newIn)
+        @appendPort(newIn)
+        newOut = new Port(@, @varyingType(otherPort.type), 'out')
+        @outPorts.splice(@outPorts.length - 1, 0, newOut)
+        @appendPort(newOut)
+    else
+      if thisPort.kind is 'in'
+        index = @inPorts.indexOf(thisPort)
+        if index isnt @inPorts.length - 1
+          @removePort(thisPort)
+          @removePort(@outPorts[index])
+          @inPorts.splice(index, 1)
+          @outPorts.splice(index, 1)
 
     window.i = @
     @locateAllPorts()
@@ -44,9 +53,7 @@ class Interpolate extends Block
         statements.declarationPart.push("varying #{type.type} #{outPort.name}")
     )
 
-  
-
-
+Block.blockDict[ID] = Interpolate
 window.Interpolate = Interpolate
 
 
